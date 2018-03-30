@@ -1,0 +1,155 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="shortcut icon" href="site/images/flavicon12.ico" >
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width" />
+<title>CategoricalLMVariables&mdash;Benton</title>
+<link rel="stylesheet" href="site/font-awesome-4.7.0/css/font-awesome.min.css">
+<link href='http://fonts.googleapis.com/css?family=Noto+Serif' rel='stylesheet' type='text/css' />
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+<link href="site/css/response-css.css" rel="stylesheet" type="text/css" />
+<!--[if lt IE 9]>
+<script src="dist/html5shiv.js"></script>
+<![endif]-->
+</head>
+
+<body>
+	<header class="blog-header clear">
+    
+    	<h1><a href="index.html">Deon T. Benton</a></h1>
+        <h6>Occam's razor: a minimalist's solution</h6>
+        
+        <nav class="main-nav">
+          <div>Psychologist</div>
+          <div>Student</div>
+          <div>Human</div>
+		</nav>
+        
+    </header>
+    
+    <main class="container">
+          
+          <section class="entry-article">
+          	<h1 class="entry-title">Interpreting Interactions between 2 Categorical Predictors in a Linear Model (in R)</h1>
+            <span class="post-meta"><time datetime="2014-1-7">20 January 2017</time></span>
+
+			<p>Recently, I encountered an issue in which I had to interpret the interaction between two categorical variables in a multiple regression linear model context but could not quite figure out how exactly to interpret that interaction. Ordinarily, in an ANOVA context, each predictor would represent a factor with n levels, and subsequent interpretations of such main effects (i.e., predictors or factors) and interaction between the effects boiled down to assessing differences in means between each main effect and, for interactions, combinations of each main effect. While interpretation of interaction terms (and, to some extent, fixed effects) in the multiple regression context is less straightforward, the task can be made significantly easier by writing out the full model and referring to that model when interpreting model results.</p>
+			
+			<p>To get started, we'll use the College data set as a working example, which you can find and download <a href="http://www-bcf.usc.edu/~gareth/ISL/data.html" class="model" target="_blank">here</a>. Be sure to save the <span class="snippet">College.csv</span> file to a location on your computer that is easily accesible such as your desktop or in a "documents" folder of some sort. Note that I'm using <span class="snippet">R</span>, which means that the interpretations and conclusions I make are based on R's model output, although it's worth mentioning that the same logic and conclusions will hold in <span class="snippet">SPSS</span>, <span class="snippet">STATA</span>, <span class="snippet">MATLAB</span>, <span class="snippet">SAS</span>, <span class="snippet">Excel</span>, or any other proprietary or non-proprietary tool not here listed.</p>
+			
+			<p>Now that <span class="snippet">College.csv</span> is saved somewhere on your computer, let's run the following command to make it accessible in R. Arbitarily, we'll store it in an object called "D," although you're free to store it under any arbitrarily chosen object name you'd like. Note that the command below is especially useful if you do not know the file path. If know your file path is located somewhere in your current working directory, simply type in <span class="snippet">list.dirs()</span> to get the full file path (if the file isn't stored in your current directory, simply switch directories to the correct one). It is worth mentioning here as an aside that in general it is not advisable to use <span class="snippet">attach</span> in R  to minimize redundant codes for reasons that I will not discuss here but nonetheless can be found <a href="http://stackoverflow.com/questions/10067680/why-is-it-not-advisable-to-use-attach-in-r-and-what-should-i-use-instead" class="model" target="_blank">here</a>. Although it's true that indexing can be cumbersome and annoying, abstaining entirely from the use of the <span class="snippet">attach</span> command will spare you of future headaches and wasted time. </p>
+			
+			<div class="math">D = read.csv(file.choose(), header = TRUE)</div>
+			
+			<p>Before we begin any analysis, it's useful to look at the structure of the data to determine which factors represent numerical and interger (i.e., quantitative) variables and which represent factor (i.e., categorical) variables.  This can be achieved with the <span class="snippet">str()</span> command, like so. Note that because I don't like to interpret scientific notation, I'll also run the <span class="snippet">options(scipen=999)</span> command to disable scientific notation. </p>
+			
+			<div class="math">str(D) </br> </br> options(scipen=999) </div>
+			
+			<p>From the command above, we get the image below, which shows that this data set contains just 3 categorical (factor) variables, including one that I created and called for want of a better term <span class="snippet">new.fact</span> (see below for the code for how to add that variable to the existing data frame). The first factor variable we'll use is called <span class="snippet">new.fact</span> and has 2 levels (i.e., "Blicket" and "Fop"&mdash;these names are arbitrary), and the second factor variable is called <span class="snippet">Private</span> and has 2 levels (i.e., "Yes" and "No"). If you're curious about what these and other variables mean in the D data set, you can use this <span class="snippet">?D</span> command to learn more about this data. In general, though, Fop and Blicket are names of two conditions and Private corresponds to type of high school (i.e., whether or not the high school was private).</p>
+			
+			<figure><img src="site/images/blog post str data.jpg" alt="image of the structure of the College.csv data set" /></figure>
+			
+			<p>Given that certain assumptions must be met to trust and interpret the output of linear models (e.g., such as <a href="http://www.statisticssolutions.com/normality/" class="model" target="_blank">normality of errors</a> and <a href="http://www.statisticssolutions.com/homoscedasticity/" class="model" target="_blank">homoscedasticity</a>), we'll next assess whether these assumptions have in fact been met. We'll use histograms and boxplots to assess normality and homoscedasticity, respectively. Note this is the approach I use when checking linear-model assumptions, and you may well choose to use an entirely different approach based on your field and training experience.</p>
+			
+			<p>First, let's create an empty plotting object with the <span class="snippet">par()</span> function. We'll create a 1 (row) x 2 (column) plotting object, which means that we'll be making two plots. Note that <span class="snippet">c</span> is the concatenate function, which we need to specify here to ensure our plotting object adhere to the above dimensions. Also note that I included below the code for adding the arbitrary <span class="snippet">new.fact</span> factor variable to <span class="snippet">D</span>.</p>
+			
+			<div class="math">par(mfrow=c(3,2)) </br> </br> D$new.fact = as.factor(sample(c("Blicket", "Fop"), 777, replace = TRUE))</div>
+			
+			<p>Next, let's write a simple <span class="snippet">for()</span> loop to obtain the histograms for the <span class="snippet">new.fact</span> variable. Although <span class="snippet">for()</span> loops are useful when looping or iterating over a factor variable with many levels such as <span class="snippet">X</span> which has 777 levels (and, as such, can scale up quite nicely for multi-level factors), obtaining the two histograms can be (and, quite honestly, should be) achieved here without using such a loop.</p>
+			
+			<div class="math">par(mfrow=c(1,2)) </br> for (ii in levels(D$new.fact)) </br> hist(D$Apps[D$new.fact==ii], breaks=5) </br> par(mfrow=c(1,1))</div>
+			
+			<p>We get the following histograms when we plot the number of submitted applications (i.e., <span class="snippet">Apps</span>) by the "Blicket" and "Fop" levels of the <span class="snippet">new.fact</span> variable. It can be seen from these graphs that the data are not normally distributed (i.e., across either level when plotted against <span class="snippet">Apps</span>), which suggests a violation of the normality assumption (i.e., the data do not have a bell-curve shape).</p>
+			
+			<figure><img src="site/images/new.fact hists.jpg" alt="new fact histograms" /></figure>
+			
+			<p>We can confirm that such a violation exists formally with the <span class="snippet">shapiro.test()</span> function in R, where H<sub>0</sub> (i.e., the null) is that the data are normal (you want large p-values). We'll first create an empty vector of length 2 in which to store the p-values for the <a href="https://en.wikipedia.org/wiki/Shapiro%E2%80%93Wilk_test" class="model">Shapiro-Wilks test</a> and then write another <span class="snippet">for()</span> loop to obtain such p-values, although again the <span class="snippet">for()</span> loop may not be all that necessary here. Both p-values were less than <em>p</em> &lt; .00001, which further suggests that the data are non-normal.</p>
+			
+			<div class="math">shapiro_ps = rep(0,2) </br> </br> for(i in levels(D$new.fact)) { </br> </br>
+			test = shapiro.test(D$Apps[D$new.fact==i]) </br> </br>
+			shapiro_ps[i] = test$p.value </br>
+			}</div>
+			
+			<p>Let's also make a side-by-side box plot to visualize whether, for the <span class="snippet">new.fact</span> variable, the data <em>across</em> each level of this factor are equally spread. It turns out that the code to implement this is even more straightforward (and easier to implement) than the code to obtain histograms above and requires just a single line of R code. We'll plot <span class="snippet">Apps</span> by each level of the <span class="snippet">new.fact</span> variable.</p>
+			
+			<div class="math">boxplot(Apps~new.fact, data=D)</div>
+			
+			<p>As can be seen below, there is evidence of homoscedasticity (i.e., equal spread), although this isn't true for the <span class="snippet">Private</span> variable (which, because of laziness, is not shown here).</p>
+			
+			<figure><img src="site/images/box_plot_new_fact.jpg" alt="new fact side-by-side boxplots" /></figure>
+			
+			<p>In addition to using boxplots to check for homoscedasticity, we can also confirm whether our claim above that the data for this factor are homoscedastic is correct with the <a href="https://en.wikipedia.org/wiki/Levene's_test" class="model">Levene's test</a> function in R. In much the same way that the  null for the Shapiro-Wilks test was that the data are normal, H<sub>0</sub> here corresponds to evidence of homoscedasticity (again, we want a large p-value). However, before we can use the <span class="snippet">leveneTest()</span> function we need to install the <span class="snippet">car</span> package and call it using the <span class="snippet">library</span> command, as is shown below.</p>
+			
+			<div class="math">install.packages("car") </br> </br> library(car) </br> </br> leveneTest(D$Apps, D$new.fact, center=mean)   </div>
+			
+			<p>The Levene's test results confirmed that the data for the <span class="snippet">new.fact</span> factor plotted by <span class="snippet">Apps</span> is in fact homoscedastic with <em>p</em> = .862. In contrast, there is both visual and formal evidence of heteroscedasticity when <span class="snippet">Private</span> is plotted against <span class="snippet">Apps</span>&mdash;that is, evidence of equal spread across the two levels. Here, <em>p</em> &lt; .0001.</p>
+			
+			<p>Having done the required preliminary work to get a sense of the data, let's define our interaction multiple-regression linear model. We'll store the model in an object called <span class="snippet">lm.fit</span>.</p>
+			
+			<div class="math">lm.fit = lm(Apps~new.fact+Private+new.fact:Private, data=D)</div>
+			
+			<p>We'll now use the <span class="snippet">summary()</span> function to get a summary of the model.</p>
+		
+			<div class="math">summary(lm.fit)</div>
+			
+			<p>Below is the model output:</p> 
+			
+			<figure><img src="site/images/lm_model_summary.jpg" alt="summary of linear model" /></figure>
+			
+			<p>Let's consider each coefficient in the model in turn. We'll start with the intercept term and then work our way down. However, to make interpretation of each coefficient in the model output significantly easier, let's first write out the full model. As a general note, writing out the full model (which usually can be done directly from the model output in your statistical-analysis software) is generally a good habit to get into because it'll make interpreting far more complicated models much easier. Thus, the full model with <span class="snippet">Apps</span> as the response variable, and <span class="snippet">Private</span> and <span class="snippet">new.fact</span> as the main effects, and <span class="snippet">new.fact</span>*<span class="snippet">Private</span> as the interaction term is represented by the following equations:</p>
+			
+			<div class="math">Full_model = &beta;<sub>0</sub> + &beta;<sub>1</sub>X<sub>new.fact</sub> + &beta;<sub>2</sub>X<sub>Private</sub> + &beta;<sub>3</sub>X<sub>new.fact</sub>*X<sub>Private</sub> </br> </br> new.fact[Blicket]_Private[No] = &beta;<sub>0</sub> </br> </br> new.fact[Fop]_Private[No] = &beta;<sub>0</sub> + &beta;<sub>1</sub>X<sub>new.fact</sub> </br> </br> new.fact[Blicket]_Private[Yes] = &beta;<sub>0</sub> + &beta;<sub>2</sub>X<sub>Private</sub> </br> </br>  </div>
+			
+			<p>Starting with the intercept term (the second line from the top), we see that it corresponds to the mean number of applications for those in the Blicket (baseline) condition who do not attend a private school, which is 5,778. Note that R automatically codes baseline (i.e., response) variables as "0"&mdash;that is, R automatically implements <a href="https://en.wikiversity.org/wiki/Dummy_variable_(statistics)" class="model">dummy coding</a>, which is nice and saves us an extra step. We can confirm that the intercept does indeed refer to this mean by running the following command:</p>
+			
+			<div class="math">mean(D$Apps[D$new.fact=="Blicket" & D$Private=="No"])</div>
+			
+			<p>The command above confirms that intercept here refers the mean number of submitted applications for those in the Blicket condition who did not attend a private school. The <span class="snippet">new.factFop</span> coefficient above, which is equal to -98.72, corresponds to the difference in means between those in the Blicket condition who did not attend a private school and those in the Fop condition who also did not attend private school, where those in the Fop condition who did not attend private school presumably submitted fewer apps than those in the Blicket condition based on the sign of the <span class="snippet">new.factFop</span> variable. The command below illustrates this point.</p>
+			
+			<div class="math">&#916; = mean(D$Apps[D$new.fact=="Fop" & D$Private=="No"]) - mean(D$Apps[D$new.fact=="Blicket" & D$Private=="No"])</div>
+			
+			<p>Similarily, the <span class="snippet">PrivateYes</span> coefficient above corresponds to the difference in mean number of submitted applications between those in the Blicket condition who did not attend private school and those in the same condition who did attend private school. The model above shows that this difference is equal to -3761, which can be confirmed by running the following command to obtain the difference between the two variables. Note again that because the coefficient is negative, this suggests (and can be confirmed) that fewer applications are submitted when an individual attended a private school compared to when they did not attend one.</p>
+			
+			<div class="math">&#916; = mean(D$Apps[D$new.fact=="Blicket" & D$Private=="Yes"]) - mean(D$Apps[D$new.fact=="Blicket" & D$Private=="No"])</div>
+			
+			<p>The key to understanding the final interaction term (<span class="snippet">new.factFop:PrivateYes </span>) is to recognize that it <em>does not</em>, as intution might suggest, represent the differences in mean number of submitted applications between those in the Blicket condition who did not attend private school and those in  the Fop condition who did attend private school. This is because interpreting the interaction term necessarily requires that we also interpret and understand the additive effect of one coefficient on the other. Indeed, if this were the case&mdash;that the interaction term itself (ignoring the other coefficients) represented the difference in mean submitted applications between the intercept and interaction term (as was the case with the non-interaction coefficients in the model)&mdash;we'd expect the difference between the two conditions to equal 13.85, where presumably more applications were submitted for the latter group than for the former. In fact, it turns out to be the case that fewer applications were submitted in the latter case (i.e., ~1,932) than in the former case (~5,778), and a simple glance at these two means suggests that the difference between them would be far greater than 13.85. The following three commands demonstrate can be used to illustrate the above points.</p>
+			
+			<div class="math">mean(D$Apps[D$new.fact=="Blicket" & D$Private=="No"]) </br> </br> mean(D$Apps[D$new.fact=="Fop" & D$Private=="Yes"]) </br> </br> &#916; = mean(D$Apps[D$Private=="Yes" & D$new.fact=="Fop"]) - mean(D$Apps[D$Private=="No" & D$new.fact=="Blicket"])</div>
+			
+			<p>It turns out to be the case that, if we partial out the interaction term (see below) by subtracting it from the sum of both (main-effects) coefficients in the model, the sum of these coefficients necessarily <em>will</em> represent the difference in mean submitted applications between those in the Blicket condition who did not attend private school (the reference group) and those who <em>both</em> did attend private school (<span class="snippet">PrivateYes</span>), where condition is held constant between this group and the reference (i.e., intercept) group, <em>and</em> those who were in the Fop condition (<span class="snippet">new.factFop</span>), where type of school is held constant between this group and the reference (i.e., intercept) group. Given that each coefficient (i.e., <span class="snippet">PrivateYes</span>) and <span class="snippet">new.fact</span>) represents the change in submitted applications when <em>either</em> type of school or condition is held constant between the particular coefficient (i.e., <span class="snippet">PrivateYes</span> and <span class="snippet">new.fact</span>) and the reference group (<span class="snippet">(Intercept)</span>), the sum of these coefficients (partialing out the interaction term) must equal the difference between the reference group and the interaction coefficient; that is, because each coefficient (ignoring the interaction term) represents a change in either the type of school or condition <em>but not both</em> compared to the intercept term, summing the two coefficients naturally captures the effect of changing the intercept by <em>both</em> the type of school <em>and</em> condition. Recall that the interaction coefficient represents the mean number of submitted applications for those in the Fop condition who attended private school.</p>
+			
+			<div class="math">&#916; Blicket-No and Fop-Yes = new.factFop + PrivateYes - new.factFop:PrivateYes </br> </br> &#916; Blicket-No and Fop-Yes = -98.72 + -3761.83 + 13.85 = -3846.698 </div>
+
+			<p>It is important to note in closing that if the end goal of these analyses was to publish the results (it's not, fortunately!) it would be unacceptable to write report these results. There are at least 3 reasons for this. First, because there was evidence of severe non-normality when the response variable was plotted by each level of each factor and because for at least one of the factors (i.e.,Private) the data were heteroscedastic, it would be inappropriate to report the p-values and standard errors (which we can use to obtain confidence intervals) from the model. This is because these statistics derive from parametric analyses (i.e., t-tests in the case of a linear model) that require the data to be normal (and, correspondingly, symmetric). When such violations exist, it is more appropriate to use non-parametric analyses (which do not assume a functional form and, as such, allow non-normality and heteroscedasticity) to obtain standard errors (and confidence intervals) and p-values. I've seen people use the Wilcoxon sign-ranked paired test before to examine differences in means between two (non-normal) populations&mdash;in general, I'd advise <em>against</em> using this test because lots of information gets lost when it's used&mdash;but the two approaches I prefer when estimating standard errors (and confidence intervals) and p-values, respectively, are bootstrapping and permutation tests. Second, although we did not interpret the model coefficients in terms of their corresponding p-values here, it would be critical (assuming the data meet the required assumptions) to report and interpret the significance level of each coefficient when attempting to publish these data. I chose not to focus on the p-values here because (1) the data were not normal or entirely homoscedastic which limits the interpretability of them and because (2) my aim was to discuss how exactly to interpret two categorical factor interaction variables without reference to p-values. Third, given that the <span class="snippet">new.factFop</span> and <span class="snippet">new.factFop:PrivateYes</span> variables were non-signficant, it would be prudent to omit these variables and rerun the model to obtain a simpler, more parsimonious model. Indeed, it turns out that because the aforementioned 2 variables were non-signficant, the simpler model in which these variables are omitted is necessarily better; that is, the simpler model has a lower BIC value (14901 vs. 14914), larger adjusted R-squared value (18.57% vs. 18.37%), a larger F-statistic (177.9 vs. 59.2), and a lower RSE value (3493 vs. 3497) than the simpler model.</p>
+          </section>
+        
+    </main>
+    
+    <footer class="site-footer">
+        <div class="inner">
+             <section class="copyright">All content copyright <span class="footer-name">Deon T. Benton</span> &copy; 2017 &bull; All rights reserved.</section>
+        </div>
+    </footer>
+    
+    <script type="text/javascript">
+
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-33778246-1']);
+		_gaq.push(['_trackPageview']);
+	  
+		(function() {
+		  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+
+	</script>
+    
+    
+    
+
+</body>
+</html>

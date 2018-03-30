@@ -1,0 +1,95 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="shortcut icon" href="site/images/flavicon12.ico" >
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width" />
+<title>Binary Vectors&mdash;Benton</title>
+<link rel="stylesheet" href="site/font-awesome-4.7.0/css/font-awesome.min.css">
+<link href='http://fonts.googleapis.com/css?family=Noto+Serif' rel='stylesheet' type='text/css' />
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+<link href="site/css/response-css.css" rel="stylesheet" type="text/css" />
+<!--[if lt IE 9]>
+<script src="dist/html5shiv.js"></script>
+<![endif]-->
+</head>
+
+<body>
+	<header class="blog-header clear">
+    
+    	<h1><a href="index.html">Deon T. Benton</a></h1>
+        <h6>Occam's razor: a minimalist's solution</h6>
+        
+        <nav class="main-nav">
+          <div>Psychologist</div>
+          <div>Student</div>
+          <div>Human</div>
+		</nav>
+        
+    </header>
+    
+    <main class="container">
+          
+          <section class="entry-article">
+          	<h1 class="entry-title">Creating Unique Binary Vectors of Length n (in R)</h1>
+            <span class="post-meta"><time datetime="2017-2-9">9 February 2017</time></span>
+
+			<p>I found myself recently working on a computational-modeling project whereby I needed to train a neural network on a series of unique binary vectors of length 10; that is, I needed to create a linearly independent set of vectors. It turns out that there is a simple solution in R that I wanted to document here, both for posterity and to help out anyone who'd need to do something similar for their own project.</p>
+			
+			<p>First, install the <span class="snippet">hier.part</span> package in R. Run the following command to install that package.</p>
+			
+			<div class="math">install.packages("hier.part")</div>
+			
+			<p>With the package now installed, let's load the package, which can be achieved with either the <span class="snippet">require()</span> or <span class="snippet">library()</span> commands (see <a href="https://yihui.name/en/2014/07/library-vs-require/" class="model">this</a> for an interesting argument <em>against</em> using the <span class="snippet">require()</span> command).</p>
+			
+			<div class="math">require(hier.part)</div>
+			
+			<p>Note that we'll be using the <span class="snippet">combos()</span> command from this library. To list all available functions in a library, simply run the following code and replace "hier.part" with the name of the package with which you're working:</p>
+			
+			<div class="math">library(help = hier.part)</div>
+			
+			<p>Let's now create an object in which to store our uniquely permuted vectors of length 10. (Note that if you want a set of unique vectors of lengths other than 10, simply replace 10 with the desired length.) The following command achieves that for us:</p>
+			
+			<div class="math">binary = combos(10)$binary</div>
+			
+			<p>Next, let's convert our <span class="snippet">binary</span> object into a data frame. This step was useful for me because ultimately I needed to produce a structure&mdash;which contained the unique vectors&mdash;over which I could write a for() loop.</p>
+			
+			<div class="math">binary.dataframe=data.frame(binary)</div>
+			
+			<p>Finally, let's convert that <span class="snippet">binary.dataframe</span> into a .csv file and export it using the <span class="snippet">write()</span> command.</p>
+			
+			<div class="math">write.csv(binary.dataframe, file="binary.csv")</div>
+
+			<p>That is it!  I hope someone finds this short tutorial useful.</p>
+			
+          </section>
+        
+    </main>
+    
+    <footer class="site-footer">
+        <div class="inner">
+             <section class="copyright">All content copyright <span class="footer-name">Deon T. Benton</span> &copy; 2017 &bull; All rights reserved.</section>
+        </div>
+    </footer>
+    
+    <script type="text/javascript">
+
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-33778246-1']);
+		_gaq.push(['_trackPageview']);
+	  
+		(function() {
+		  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+
+	</script>
+    
+    
+    
+
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="shortcut icon" href="site/images/flavicon12.ico" >
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width" />
+<title>Lin-Algebra&mdash;Benton</title>
+<link href='http://fonts.googleapis.com/css?family=Noto+Serif' rel='stylesheet' type='text/css' />
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+<link href="site/css/response-css.css" rel="stylesheet" type="text/css" />
+<!--[if lt IE 9]>
+<script src="dist/html5shiv.js"></script>
+<![endif]-->
+</head>
+
+<body>
+	<header class="blog-header clear">
+    
+    	<h1><a href="index.html">Deon T. Benton</a></h1>
+        <h6>Occam's razor: a minimalist's solution</h6>
+        
+        <nav class="main-nav">
+          <div>Psychologist</div>
+          <div>Student</div>
+          <div>Human</div>
+		</nav>
+        
+    </header>
+    
+    <main class="container">
+          
+          <section class="entry-article">
+          	<h1 class="entry-title">AEICM: On the importance of linear algebra</h1>
+            <span class="post-meta"><time datetime="2014-05-26">26 May 2014</time></span>
+          	<p>In the previous blog post, I attempted to make the case that we can begin to understand how computational models learn by considering the functional role played by of the learning algorithms that underpin them. In this blog post, my aim is to show how linear algebra can be important for understanding how models carry out their internal computations and how, based on these computations, they arrive at certain solutions. Specifically, I wish to make the case that many of the properties of the models that I will soon discuss are captured by the mathematics of linear algebra.</p>
+            
+            <p>To begin with, one important reason for the great utility of linear algebra lies in the simplicity of its notation. In particular, what linear algebra enables us to do is to describe arbitrarily long lists of information in terms of more succinct vectors and matrices. This convention is perhaps most useful when the input or output of a system is 50- or even 100-dimensions, in which each component of the vector represents a dimension.</p>
+            
+            <p>In addition to providing a kind of simplified syntax for representing information of <em>n</em> dimension, linear algebra provides a useful way to determine, geometrically, how similar are two vectors. This can be done, for instance, by using the law of cosines to find the internal angle between two vectors or simply taking the dot product of any two vectors, where a dot product of 0 would indicate dissimilar vectors. Indeed, by mathematically manipulating vectors in these ways, we can better understand why, and to what extent, computational models learn or fail to learn given a set of vectors.</p>
+            
+            <p>The notion of a dot product is, itself, an interesting one because it provides a way to determine the similarity between two vectors in any dimension. Thus, even if using the law of cosines to envision the angle between two vectors is implausible, and indeed impossible, in anything greater than three dimensions, by computing the dot product between any two, random vectors, you can get a sense for how similar the vectors are to each other. This, then, enables one to make definitive predictions for how successful the network will be in different contexts.</p>
+            
+            <p>The utility of linear algebra is also apparent when determining whether a system is linear or nonlinear. Knowing whether a system is linear or nonlinear is important not least because it enables one to anticipate the output of the system. Consider the following equation for a system that is assumed to be linear:</p> 
+            
+            <div class="math">n<sub>j</sub> = a &bull; w</div>
+            
+            <p>With regard to the equation above, the output of the system, denoted by n<sub>j</sub>, is equal to the inner (dot) product of the <strong>a</strong> and <strong>w</strong> vectors. Thus, if our system is linear, and we assume that the <strong>a</strong> and <strong>w</strong> vectors are orthogonal (i.e., dot product of 0), then we can be confident that there will be no (i.e., 0) response from the system. What this simple example is intended to demonstrate is that when we know what type of system a model is, then we can know how that system will respond given a set of vectors.</p>
+            
+            <p>Despite this last reason being more of an opinion than fact, it is still worth mentioning. The point is simply that the utility of linear algebra, as I have alluded to above, has much to do with its simplicity, both as a mathematics and in terms of its written notation. Indeed, one can theoretically learn all that is needed from linear algebra to understand computational models in just one day. This means that in contrast to the endless hours that one would need to spend to understand the complex mathematics that underlie other systems, such as Esther Thelen's dynamical-systems model, one can get a sense for how computational models function mathematically by checking out a linear algebra book at the local library and spending a few hours reading up on the subject.</p>
+            
+            <p>We cannot understate the importance of differential calculus on our understanding of computational models. Even though I will not say much about the topic, given that I talked quite extensively about it in the previous post, I will say that the mathematics of differential calculus is important for developing our intutions of how computational models learn. In particular, differential calculus is important from a computational-modelling perspective because it enables one to really understand the learning algorithms that underpin most models, given that most of these algorithms are calculus-based. Jay McCelland's Cascade model, which you can read about on his <a href="http://psych.stanford.edu/~jlm/" class="model">website</a>,  is a good example of taking and applying the concepts of differential calculus.</p>
+            
+            <p>In contrast to the often vague, verbal theories that plagued, and in some sense continue to plague, some fields of psychology, compuational models serve as important mathematical formalisms and tools that force psychologists to be explicit about representations and processes, formalisms and tools that serve as important explanatory frameworks for the field. Linear algebra and differential calculus are but two ways of developing the intuition for how computational models function and can be useful for expanding our knowledge to other complex systems.</p>
+          </section>
+          
+          <section class="related">
+          	<h2>Related Posts</h2>
+            <h3 id="related-on-hover"><a href="backprop.html" id="related-anchor">An elementary introduction to computational modelling: Backpropagation<span id="related-span">18 May 2014</span></a></h3>
+            
+          </section>
+        
+    </main>
+    
+    <footer class="site-footer">
+        <div class="inner">
+             <section class="copyright">All content copyright <span class="footer-name">Deon T. Benton</span> &copy; 2014 &bull; All rights reserved.</section>
+        </div>
+    </footer>
+    
+	<script type="text/javascript">
+			$("#related-on-hover").on("mouseover", function() {
+						$(this).find("span#related-span").css("color", "blue");									
+		});
+    </script>
+    
+    <script type="text/javascript">
+
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-33778246-1']);
+		_gaq.push(['_trackPageview']);
+	  
+		(function() {
+		  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+
+	</script>
+    
+    
+    
+
+</body>
+</html>

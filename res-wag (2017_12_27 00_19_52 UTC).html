@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="shortcut icon" href="site/images/flavicon12.ico" >
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width" />
+<title>ResWagModel&mdash;Benton</title>
+<link href='http://fonts.googleapis.com/css?family=Noto+Serif' rel='stylesheet' type='text/css' />
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+<link href="site/css/response-css.css" rel="stylesheet" type="text/css" />
+<!--[if lt IE 9]>
+<script src="dist/html5shiv.js"></script>
+<![endif]-->
+</head>
+
+<body>
+	<header class="blog-header clear">
+    
+    	<h1><a href="index.html">Deon T. Benton</a></h1>
+        <h6>Occam's razor: a minimalist's solution</h6>
+        
+        <nav class="main-nav">
+          <div>Psychologist</div>
+          <div>Student</div>
+          <div>Human</div>
+		</nav>
+        
+    </header>
+    
+    <main class="container">
+          
+          <section class="entry-article">
+		  <p class="proviso">I'm putting this here not so much because I think it would be an interesting post, but more as a reference to which later I can return. Still, I hope you can learn something from it as well.</p>
+          	<h1 class="entry-title">Unpacking the Rescorla-Wagner model</h1>
+            <span class="post-meta"><time datetime="2014-11-25">25 November 2014</time></span>
+
+			<p>The Rescorla-Wagner model (henceforth, R-W model) is a mathematical model that was developed to describe the situations under which classical conditioning occurs. Specifically, the model was developed primarily to account for how animals can learn from information that covaries overtime based on prediction errors, similar to the Widrow-Hoff rule and backpropagation.</p> 
+			
+			<p>To make the R-W model more intuitive, consider the following example. Imagine being a recently born puppy who hears the doorbell ring (unconditioned stimulus or US<sub>1</sub>). Assuming that you've never before heard this sound, you've no particular expectations about whether some is at the door (US<sub>2</sub>). If, though, each time the doorbell is rang you see a person enter the house, you'd quickly learn to associate the sound of the doorbell (now the conditioned stimulus or CS) with a person.</p>
+			
+			<p>Informally, the R-W model would argue that your ability to learn that the door bell predicts the appearance of a human resulted from a change in associative <em>weight</em> strength from initially not expecting a human (i.e., no association between the doorbell and the person) to expecting the presence of a person.</p>
+			
+			<p>Formally, the model is as follows: (Note that the superscripts do not correspond to powers but rather to iterations.)</p>
+			
+			<div class="math">&Delta;V<sub>x</sub><sup>n+1</sup> = &alpha;&beta; (&lambda; - V<sub>x</sub><sup>n</sup>) <br /> V<sub>x</sub><sup>n+1</sup> = V<sub>x</sub><sup>n</sup> + &Delta;V<sub>x</sub><sup>n+1</sup> <br /> V<sub/>x</sub><sup>0</sup> = 0 </div>
+			
+			<p>where n &isin; {0,1,2,...}, &Delta;V<sub>x</sub><sup>n+1</sup> represents the change in associative strength between the US and CS, &alpha; is the salience of the CS, &beta; is the scalar learning rate, &lambda; is the binary likelihood of the US occurring, and V<sub>x</sub><sup>n</sup> is the iterative sum of the associative strengths across learning trials.</p>
+			
+			<p>Unpacking the formula, we can see that &Delta;V<sub>x</sub><sup>n+1</sup> represents the changed associative strength between the bell and the appearance of a person; &alpha; represents how strongly the CS (i.e., the doorbell) predicts a person; &beta; represents how quickly one learns to associate the door bell and a human; V<sub>x</sub><sup>n</sup> represents the total associative strengths of all CSs&mdash;in this case, there's only one CS (x), but this can easily be extended to cases in which there is more than one CS (e.g., knock <em>and</em> door bell).</p>
+			
+			<p>At time n = 0, we expect V<sub>x</sub><sup>0</sup> to be 0. There should be no expectation that a person is at the door when the dog hears the door for the first time. Notice that V<sub>x</sub><sup>n</sup> represents an expectation that is expressed quantitatively. In contrast, &lambda; is 1 (doors always predict people). Importantly, &lambda; can only take on binary (0 or 1) values. For &alpha;, we could set the value to, say, 0.6 (where 0 would be not strong and 1 would be very strong). Finally, if we assume that our dog is especially smart, we could set &beta; to 0.8.  Thus, plugging in the values we have so far, we get:</p>
+			
+			<div class="math">n = 0 <br /> &Delta;V<sub>x</sub><sup>1</sup> = &alpha;&beta; (&lambda; - V<sub>x</sub><sup>0</sup>) = (0.6) (0.8) (1 - 0) = 0.48 <br /> V<sub>x</sub><sup>1</sup> = V<sub>x</sub><sup>0</sup> + &Delta;V<sub>x</sub><sup>1</sup> = 0 + 0.48 = 0.48</div>
+			
+			<p>This result tells us that, because the dog's initial expectation was 0, we need to change his expectation by a value of 0.48. Notice that the 0.48 change is being driven entirely by the constant coefficients. Now, plugging in the above values, we get:</p>
+			
+			<div class="math">n = 1 <br /> &Delta;V<sub>x</sub><sup>2</sup> = &alpha;&beta; (&lambda; - V<sub>x</sub><sup>1</sup>) = (0.6) (0.8) (1 - 0.48) = 0.25 <br /> V<sub>x</sub><sup>2</sup> = V<sub>x</sub><sup>1</sup> + &Delta;V<sub>x</sub><sup>2</sup> = 0.48 + 0.25 = 0.73</div>
+			
+			<p>Notice now that the associative strength between the door bell and the appearance of a person has changed from 0.48 to 0.73&mdash; we are getting closer to 1 (i.e., the prediction error is approaching 0)! Now, let's plug in the sum of the new associative strength and the old associative strength (i.e., 0.73) for V<sub>x</sub><sup>2</sup> (we sum the two because we are concerned with how the weight <em>changes</em> from iteration to iteration). We get:</p>
+			
+			<div class="math">n = 2 <br /> &Delta;V<sub>x</sub><sup>3</sup> = &alpha;&beta; (&lambda; - V<sub>x</sub><sup>2</sup>) = (0.6) (0.8) (1 - 0.73) = 0.13 <br /> V<sub>x</sub><sup>3</sup> = V<sub>x</sub><sup>2</sup> + &Delta;V<sub>x</sub><sup>3</sup> = 0.73 + 0.13 = 0.86</div>
+			
+			<p>We're still not there. Let's plug in our new V<sub>x</sub><sup>3</sup>, which is the sum of new associative weight and all previous weights:</p>
+			
+			<div class="math">n = 3 <br /> &Delta;V<sub>x</sub><sup>4</sup> = &alpha;&beta; (&lambda; - V<sub>x</sub><sup>3</sup>) = (0.6) (0.8) (1 - 0.86) = 0.07 <br /> V<sub>x</sub><sup>4</sup> = V<sub>x</sub><sup>3</sup> + &Delta;V<sub>x</sub><sup>4</sup> = 0.86 + 0.07 = 0.93</div>
+			
+			<p>We're almost there. Let's plug in our new value for V<sub>x</sub><sup>4</sup>. This gives us:</p>
+			
+			<div class="math">n = 4 <br /> &Delta;V<sub>x</sub><sup>5</sup> = &alpha;&beta; (&lambda; - V<sub>x</sub><sup>4</sup>) = (0.6) (0.8) (1 - 0.93) = 0.03 <br /> V<sub>x</sub><sup>5</sup> = V<sub>x</sub><sup>4</sup> + &Delta;V<sub>x</sub><sup>5</sup> = 0.93 + 0.03 = 0.96</div>
+			
+			<p>While it's possible to iterate through until we have converged to zero, we'll avoid doing so here given that the difference between 1 and 0.96 is trivially small. We can think of the 0.96 as the probability that the dog is able accurately to predict the presence of a person in the context of a ringing bell. Thus, the dog is able to predict a person with 96% accuracy. Said differently, the dog is only wrong 4% of the time. We can think of 0.03 as the amount of change we need to make to the previous associative strength, or 0.96, so that we can predict better a person in the context of a ringing door bell.</p>
+			
+			<p>More rigorously, we can show through a formal proof that &Delta;V<sub>x</sub><sup>n+1</sup> approaches zero with increasing iteration. For notation purposes, assume "lim" corresponds to the limit as n &rarr; &infin;. Because the R-W model is concerned with learning and assuming &lambda; = 1, it must be true that lim [V<sub>x</sub><sup>n</sup>] = 1. </p>
+			
+			<div class="math">&Delta;V<sub>x</sub><sup>n+1</sup> = &alpha;&beta; (1 - V<sub>x</sub><sup>n</sup>) <br /> lim [&Delta;V<sub>x</sub><sup>n+1</sup>] = lim [&alpha;&beta; (1 - V<sub>x</sub><sup>n</sup>)] <br /> lim [&Delta;V<sub>x</sub><sup>n+1</sup>] = &alpha;&beta; lim [1 - V<sub>x</sub><sup>n</sup>] <br /> lim [&Delta;V<sub>x</sub><sup>n+1</sup>] = &alpha;&beta; (lim [1] - lim [V<sub>x</sub><sup>n</sup>]) <br /> lim [&Delta;V<sub>x</sub><sup>n+1</sup>] = &alpha;&beta; (1 - 1) <br /> lim [&Delta;V<sub>x</sub><sup>n+1</sup>] = 0 </div>
+			
+			<p>What I have attempted to show, both informally and formally, is that the R-W model can explain how organisms learn by incrementally reducing the difference between what they expect and what they observe. As I mentioned at the outset, this post is written mainly as a later reference for myself, but I still hope this can help you in one way or another. An apology is also in order to all the mathematicians among me for my likely horrendous notation.</p>
+			
+          </section>
+        
+    </main>
+    
+    <footer class="site-footer">
+        <div class="inner">
+             <section class="copyright">All content copyright <span class="footer-name">Deon T. Benton</span> &copy; 2014 &bull; All rights reserved.</section>
+        </div>
+    </footer>
+    
+    <script type="text/javascript">
+
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-33778246-1']);
+		_gaq.push(['_trackPageview']);
+	  
+		(function() {
+		  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+
+	</script>
+    
+    
+    
+
+</body>
+</html>

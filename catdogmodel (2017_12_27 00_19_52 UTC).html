@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="shortcut icon" href="site/images/flavicon12.ico" >
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width" />
+<title>Cats &amp; Dogs&mdash;Benton</title>
+<link href='http://fonts.googleapis.com/css?family=Noto+Serif' rel='stylesheet' type='text/css' />
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+<link href="site/css/response-css.css" rel="stylesheet" type="text/css" />
+<!--[if lt IE 9]>
+<script src="dist/html5shiv.js"></script>
+<![endif]-->
+</head>
+
+<body>
+	<header class="blog-header clear">
+    
+    	<h1><a href="index.html">Deon T. Benton</a></h1>
+        <h6>Occam's razor: a minimalist's solution</h6>
+        
+        <nav class="main-nav">
+          <div>Psychologist</div>
+          <div>Student</div>
+          <div>Human</div>
+		</nav>
+        
+    </header>
+    
+    <main class="container">
+          
+          <section class="entry-article">
+          	<h1 class="entry-title">An elementary introduction to computational modelling: Are cats really dogs?</h1>
+            <span class="post-meta"><time datetime="2014-10-6">6 October 2014</time></span>
+            
+            <p>To this point, I've dealt primarily with the mathematics that underpin a particular flavour of computational models called parallel-distributed-processing (or connectionist) models of human cognition. With the mathematics now behind us, my aim is to discuss how computational models have been used to address many important developmental learning problems. </p>
+			
+			<p>Can infants differentiate between images of cats and images of dogs? This was the question that Paul Quinn, Peter Eimas, and Stacey Rosenkrantz (1993) sought to address in a now classic study that is known to many developmental psychologists. To investigate this question, 3- and 4-month-old infants were familiarized to pictures of either cats or dogs. This involved showing infants either 12 images of cats or 12 images of dogs. The images were drawn from various magazines. The pictures were shown in pairs, where each pair was shown for approximately 15 seconds.</p>
+			
+			<p>Following this brief familiarization phase, infants were shown test events in which a novel exemplar from the familiar category was paired with a novel exemplar from the unfamiliar category. Thus, if infants were familiarized to images of cats, they were shown test events in which a never-before-seen cat was paired with a never-before-seen dog. The results revealed that infants who were familiarized to pictures of cats looked longer during the test phase at novel pictures of dogs than at novel pictures of cats. This finding suggested that infants had formed a perceptual category of cats during the familiarization phase that, critically, <em>included</em> a novel cat but <em>excluded</em> a novel dog.</p>
+			
+			<p>What about the results for the infants who were familiarized to pictures of dogs? Here, after being briefly familiarized to images of dogs, the infants did not look longer at a novel picture of a cat than at a novel picture of a dog. This was an interesting finding because it suggested that&mdash;in contrast to the infants who were shown pictures of cats&mdash;infants who were shown pictures of dogs had formed a perceptual category of dogs that included <em>both</em> a novel dog and novel cat. Importantly, this was neither the result of a preference for dog over cat, nor was it the result of an inability to differentiate between pictures of dogs. </p>
+			
+			<p>Given that this result could not be attributed to differences in how the pictures were processed, to what, then, could this difference be attributed? Why, in other words, did infants form a perceptual category of cats that excluded dogs but not a perceptual category of dogs that excluded cats? One suggestion, though largely speculative, was that the dog features varied more than the cat features and, as a result, infants' categorical representation of cats were subsumed within their categorical representations of dogs. Indeed, Quinn et al. (1993) presented some evidence that suggested that this might be the case.</p>
+			
+			<p>To determine the precise mechanism by which these categorical representations emerged, Denis Mareschal, Robert French, and Paul Quinn (2000) trained a 10-8-10 autoencoder network to model the process by which infants form categorical representations of dogs and cats (see the image below for a schematic of a simpler 4-3-4 network). An autoencoder is a feedforward network (i.e., information is sent from the input layer forward towards the output layer) with just a single layer of hidden units. The job of the network is to learn to reproduce on the output units the pattern of activation across the input units. Critically, the number of hidden units is smaller than the number of output units. This architectural constraint forces the network to develop a more compact (i.e., lower dimensional) representation of the input that is reliable enough to reproduce the input across the output units.</p> 
+			
+			<figure><img src="site/images/autoencoder-image.jpg" alt="image of an autoencoder" /></figure>
+			
+			<p>Note that the weight matrix functions as the <a href="http://en.wikipedia.org/wiki/Change_of_basis" class="model" target="_blank">change of basis matrix</a> that combines with the input to produce the hidden units with respect to this change of basis matrix, though this linear-algebra aside is of little moment here. The process of training mentioned above involved presenting the network with twelve items from one (dog) or the other (cat) category in groups of two. In actuality, the network was trained on vectors that represented the distributional statistics of the features of the cats and dogs (e.g., head length and nose width), to name just two such features. The reason that an autoencoder was used instead of a different network type is because there is a close correspondence between the way it processes information and forms internal representations and the way infants process information and form internal representations. Similar to autoencoders, infants iteratively encode visual input into an internal representation and then assess how closely that representation matches the input. This process of comparing the internal representation to the input continues until, at last, the internal representation that is formed matches the given input.</p>
+			
+			<p>The first simulation was designed to model the original exclusivity asymmetry result. The results of this simulation demonstrated that, like infants in the original Quinn et al. (1993) study, the network was able to form a perceptual category of cats that included a novel cat but excluded a novel dog but not a perceptual category of dogs that excluded a novel cat. Thus, when the network was shown a novel cat after being trained on cats, it was able to reproduce on the output units a representation of the novel cat. When the network was shown a novel dog after training with cats, in contrast, the network was not able to reproduce on the output units the dog. Perhaps more interestingly, though, after being trained on dogs, the network reproduced both the novel cat and the novel dog; that is, the network formed a category of dogs that included both dogs as well as cats.</p>
+			
+			<p>But why? A formal analysis conducted by Mareschal et al. (2000) revealed that the asymmetry could be explained by the fact that the distributional statistics of the dog features varied considerably more so than those of the cat features. Stated more formally, each of the cat features roughly fell within two standard deviations of the dog features (but not vice versa). Thus, the cat category was subsumed within the dog category but not the other way around. Given this finding, a natural question that followed was whether this asymmetry could be reversed and perhaps eliminated. Subsequent research by Robert French, Denis Mareschal, Martial Mermillod, and Paul Quinn (2004) showed that, indeed, when the cat features vary more than the dog features, the network (as well as a separate group of 3- and 4-month-old infants) will form a category of cats that includes both a novel cat and novel dog (i.e., there was a reversal of the asymmetry effect), and when the distributional statistics of the features of the cats and dogs are made to be equal, the network (and infants) will form a category of cats that excludes dogs and a category of dogs that excludes cats.</p>
+			
+			<p>Taken together, this research suggests that infants form categories of cats and dogs based on how varied the cat and dog features are. More generally, this model is interesting because it offers a mechanistic account that explains the original asymmetry effect, a mechanistic account that, were it not for the model, would have been missing. Indeed, the fact that computational models can offer such mechanistic accounts to explain unclear phenomena is one reason why they have been and remain so popular.</p>
+            
+            
+          </section>
+          
+          <section class="related">
+          
+          	<h2>Related Posts</h2>
+            <h3 id="related-on-hover"><a href="backprop.html" id="related-anchor">An elementary introduction to computational modelling: Backpropagation<span id="related-span">18 May 2014</span></a></h3>
+           <h3 id="related-on-hover"><a href="linalgebra.html" id="related-anchor">An elementary introduction to computational modelling: Linear Algebra<span id="related-span">26 May 2014</span></a></h3>
+		   <h3 id="related-on-hover"><a href="sigfunction.html" id="related-anchor">An elementary introduction to computational modelling: Sigmoid Activation Function<span id="related-span">18 July 2014</span></a></h3>
+           
+          </section>
+
+        
+    </main>
+    
+    <footer class="site-footer">
+        <div class="inner">
+             <section class="copyright">All content copyright <span class="footer-name">Deon T. Benton</span> &copy; 2014 &bull; All rights reserved.</section>
+        </div>
+    </footer>
+    
+    <script type="text/javascript">
+
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-33778246-1']);
+		_gaq.push(['_trackPageview']);
+	  
+		(function() {
+		  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+
+	</script>
+    
+    
+    
+
+</body>
+</html>

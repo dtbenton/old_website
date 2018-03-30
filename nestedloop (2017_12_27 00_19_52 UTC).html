@@ -1,0 +1,88 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="shortcut icon" href="site/images/flavicon12.ico" >
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width" />
+<title>Nested For Loops&mdash;Benton</title>
+<link rel="stylesheet" href="site/font-awesome-4.7.0/css/font-awesome.min.css">
+<link href='http://fonts.googleapis.com/css?family=Noto+Serif' rel='stylesheet' type='text/css' />
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+<link href="site/css/response-css.css" rel="stylesheet" type="text/css" />
+<!--[if lt IE 9]>
+<script src="dist/html5shiv.js"></script>
+<![endif]-->
+</head>
+
+<body>
+	<header class="blog-header clear">
+    
+    	<h1><a href="index.html">Deon T. Benton</a></h1>
+        <h6>Occam's razor: a minimalist's solution</h6>
+        
+        <nav class="main-nav">
+          <div>Psychologist</div>
+          <div>Student</div>
+          <div>Human</div>
+		</nav>
+        
+    </header>
+    
+    <main class="container">
+          
+          <section class="entry-article">
+			<p class="proviso">The topic discussed in this post operates on the assumption that the reader possesses a basic understanding of the concept of a for() loop, even if cursory.</p>
+          	<h1 class="entry-title">On Nested For() Loops (in R)</h1>
+            <span class="post-meta"><time datetime="2017-2-24">24 February 2017</time></span>
+			<p>Due perhaps to their robustness, two of the more indispensible concepts and tools in programming and statistics are the for() loop and the nested (double or triple) for() loop. These are methods that are used to repeat a block of code a specified number of times. Even though R is technically a <a href="http://www.noamross.net/blog/2014/4/16/vectorization-in-r--why.html", class="model">vectorized</a> language (i.e., an array programming language) and thus doesn't require the use of complicated for() loops to achieve desired operations, becoming familiar with the concept of the for() loop and nested for() loops cannot (and should not) be understated. Indeed, this understanding is particularly important when learning languages that do not make use of vectorization such as Python, C, JavaScript, Objective-C, etc.. My aim in this (admittedly) brief post is to discuss the idea of the nested for() loop in the context of a simple and reproducible example.</p>
+			
+			<p>As we have done in previous posts, we'll begin by defining two variables. We'll create an <span class="snippet">age</span> and <span class="snippet">sex</span> variable, like so.</p>
+			
+			<div class="math">age = c(20, 24, 28) </br> sex = c("male","female")</div>
+			
+			<p>Let's next initialize our nested for() loop.</p>
+			
+			<figure><img src="site/images/nestedloop.jpg" alt="code for the nested for() loop" /></figure>
+			
+			<p>And here's the output for the above code.</p>
+			
+			<figure><img src="site/images/nestedloopoutput.jpg" alt="code for the nested for() loop" /></figure>
+			
+			<p>The key idea here, in terms of why R outputs what it does, is that when R (or any other language for that matter) executes a nested for() loop, first it executes the innermost loop and applies a desired function (e.g., <span class="snippet">print</span>) to every element in the innermost list, array, etc. and then executes the outermost loop and applies some desired function to each element in that list in an iterative manner. Critically, while the innermost function is being applied to the elements of the innermost list n times&mdash;where 'n' refers to the number of elements in the list or array&mdash;R will apply the same function to the outermost element until the inside function has been exhaustively applied.</p>
+
+			<p>Once the function has been applied to every element of the innermost list, R moves to the second element of the outermost list, applies the desired function to it, and then applies the innermost function to the innermost list until the function has been applied to every element in that list. To be sure, R will continue to apply the outermost function to the second element of the outermost list so long as the innermost function is being applied to every element in the innermost list or array. This process then repeats itself, with R moving to the third element of the outermost list and so on. Thus, from above, R  prints out the first element of age (20) along with the first element of sex (male), after which it again prints out the first element of age (20) along with the second element of sex (female). Given that there are only two elements in sex, next R prints out the second element of age (24) along with the first element of sex (male), after which the second element of age (24) is printed alongside the second element of sex (female). Finally, R prints out the third element in age (28) along with the first element of sex (male), followed by the third element of age (28) along with the second element of sex (female). Notice that what R has done here is to create every combination of age and sex. It should be clear why.</p>
+			
+			<p>Viol&agrave;&mdash;and that's it! If you followed along with my discussion of why R printed out what it did given the above nested for() loop, it should be easy to extend this idea to more complicated loops. If you're still unclear, I'd encourage you to reread this post or use online resources.</p>
+			
+			
+          </section>
+        
+    </main>
+    
+    <footer class="site-footer">
+        <div class="inner">
+             <section class="copyright">All content copyright <span class="footer-name">Deon T. Benton</span> &copy; 2017 &bull; All rights reserved.</section>
+        </div>
+    </footer>
+    
+    <script type="text/javascript">
+
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-33778246-1']);
+		_gaq.push(['_trackPageview']);
+	  
+		(function() {
+		  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+
+	</script>
+    
+    
+    
+
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="shortcut icon" href="site/images/flavicon12.ico" >
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width" />
+<title>Backprop&mdash;Benton</title>
+<link href='http://fonts.googleapis.com/css?family=Noto+Serif' rel='stylesheet' type='text/css' />
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+<link href="site/css/response-css.css" rel="stylesheet" type="text/css" />
+<!--[if lt IE 9]>
+<script src="dist/html5shiv.js"></script>
+<![endif]-->
+</head>
+
+<body>
+	<header class="blog-header clear">
+    
+    	<h1><a href="index.html">Deon T. Benton</a></h1>
+        <h6>Occam's razor: a minimalist's solution</h6>
+        
+        <nav class="main-nav">
+          <div>Psychologist</div>
+          <div>Student</div>
+          <div>Human</div>
+		</nav>
+        
+    </header>
+    
+    <main class="container">
+          
+          <section class="entry-article">
+          	<p class="proviso">This blog post will constitute somewhat formal derivations of the claims made in the surrounding text and can, and perhaps should, be omitted by the reader who finds such derivations tedious.</p>
+          	<h1 class="entry-title">An elementary introduction to computational modelling: Backpropagation</h1>
+            <span class="post-meta"><time datetime="2014-05-18">18 May 2014</time></span>
+          	<p>With my first year of graduate school now at a close, I now have more time to blog. Here, what I would like to do is start a new blog series, loosely titled “An elementary introduction to computational modelling,” in which I will discuss computational modelling and how developmental psychologists have used such models to illuminate otherwise unclear discussions.</p>
+            <p>In particular, my aim here is to discuss the <em>backpropagation-learning algorithm</em> (henceforth simply "backpropagation"). This decision is based on the fact that backpropagation served as one of the first, successful learning algorithms that enabled networks to solve particularly difficult problems that simple, two-layer, feedforward <a href="http://en.wikipedia.org/wiki/Perceptron" class="model" target="_blank">perceptron</a> linear systems could not solve. I have also chosen to discuss backpropagation first given that an answer to the question,  What is one way networks process information to learn?, requires one first to have a passing familiarity with the algorithm.</p>
+            
+            <p>If you are at all familiar with either the methods of traditional <a href="http://en.wikipedia.org/wiki/Gradient_descent" class="model" target="_blank">gradient descent</a> or <a href="http://en.wikipedia.org/wiki/Stochastic_gradient_descent" class="model" target="_blank">stochastic gradient descent</a>,<strong>&#8727;</strong> the idea here is to apply gradient descent to minimize the sum-squared-error cost function. Essentially, we want to update the weights in our network, which, ideally, will enable us to converge either to a local or global minimum of error. Given that our goal is to apply gradient descent to minimize error by taking the difference between &#952; (conceptualized as the x location on the Cartesian plane of our cost function from which &#952; is initialized) and the sum-squared-error cost function (think linear regression), of which error is an indirect function of the weights, we will want to find the partial derivative of the error with respect to the weights. </p> 
+            
+            <p>As we will soon see, this is not a straightforward derivative, given that error is not a direct function of the weights, but rather an indirect function of multiple terms. We will thus use the <a href="http://en.wikipedia.org/wiki/Chain_rule" class="model" target="_blank">chain rule</a> from calculus to make the computations easier. When we do determine the partial derivative of error with respect to the weights, this will give a slope. With regard to the gradient-descent procedure, the obtained slope will be multiplied by an arbitrarily set scalar learning rate &#945; (n.b., too large an &#945; will cause you to diverge from the global or local optima, and too small an &#945; will require that infinitesimal steps be made toward that optima), from which we can then find the difference between &#952; described above to determine the direction of our next step on our error cost function.</p> 
+            
+            <p>Even though this will not factor much into the forthcoming discussion, it is perhaps useful to note that &#945; (i.e., the term that determines the aggressiveness of our weight steps) need not constantly be adjusted. This is because if &#945; is neither too large nor too small, then the derivatives (or, equivalently, the magnitude of our weight steps) become less steep over time as we converge to our minimum until, at some point, we have reached the minimum and the resulting derivative is zero. Thus, regardless the value of &#945;, if our derivative is zero and we have converged, then the product of the partial derivative of error with respect to weights and &#945; will be zero.</p>
+            
+            <p>That having been said, we will now dive right into the math and take the partial derivatives of each of the below expressions (note here that we will, for brevity's sake, only be considering the derivations for a system that does not have any hidden units). Given that most discussions of backpropagation provide only the algorithm's informal derivations, my aim in this piece is to provide somewhat more formal, and thus less abstruse, derivations, if only to make the concepts discussed in the surrounding text clearer. This is the main contribution of the present article.</p>
+            
+            <div class="math">&Delta;<em>w</em><sub><em>kj</em></sub> = &#40; &part;<em>E</em> &frasl; &part;<em>a</em><sub><em>k</em></sub> &#41; &#40; &part;<em>a</em><sub>k</sub> &frasl; &part;<em>net<sub><em>k</em></sub></em> &#41; &#40; &part;<em>net<sub>k</sub></em> &frasl; &part;w<sub><em>kj</em></sub> &#41; <br /><em>E</em> = 1 &frasl; 2 &#40; <em>t</em><sub>k</sub> - <em>a</em><sub>k</sub> &#41; <sup>2</sup><br /><em>a</em><sub>k</sub> = &#40; 1 + <em>e</em><sup>-net<sub>k</sub></sup>&#41; <sup>-1</sup><br /><em>Net<sub>k</sub></em> = &#40; <em>w<sub>kj</sub></em><em>a<sub>j</sub></em> &#41;</div>
+            
+            <p>We will start from the left and work our way to the right. Thus, we will first find the partial derivative of the error with respect to the activations. What we would like to first do is take the derivative of everything inside the parentheses. However, we will treat <em>t</em><sub>k</sub> as a constant, given that our chief concern is to first find the derivative of the error with respect to activations. From this, we get the following or the derivative of the inside.</p>
+            
+            <div class="math"> -1 </div>
+            
+            <p>Next, we will take the derivative of the entire expression, treating the expression inside the parentheses as a single variable. Notice that this is simply the chain rule. This yields the following.</p>
+            
+            <div class="math"> &#40;<em>t</em><sub>k</sub> - <em>a</em><sub>k</sub>&#41; </div>
+            
+            <p>We now take the product of -1 and &#40; <em>t</em><sub>k</sub> - <em>a</em><sub>k</sub> &#41;, which yields the following.</p>
+            
+            <div class="math">  -&#40;<em>t</em><sub>k</sub> - <em>a</em><sub>k</sub>&#41; </div>
+            
+            <p>Now, let us differentiate the second expression in the chain of expressions, starting with everything inside the parentheses. This gives us the following. </p>
+            
+            <div class="math">  -<em>e<sup>-net<sub>k</sub></sup></em> </div>
+            
+            <p>Next, we will differentiate the entire expression, again treating the expression inside the parentheses as a single variable. This yields:</p>
+            
+            <div class="math">  -1&#40; 1 + <em>e<sup>-net<sub>k</sub></sup></em>&#41;<sup>-2</sup></div>
+            
+            <p>We will now take the product of the both the inside and outside of the original expression. This yields.</p>
+            
+            <div class="math">  <em>e<sup>-net<sub>k</sub></sup></em> &#40; 1 + <em>e<sup>-net<sub>k</sub></sup></em>&#41;<sup>-2</sup></div>
+            
+            <p>Rewritting this expression yields the following resulting derivative.</p>
+            
+            <div class="math">  <em>e<sup>-net<sub>k</sub></sup></em> &frasl; &#40;1 + <em>e<sup>-net<sub>k</sub></sup></em>&#41;<sup>2</sup></div>
+            
+            <p>Given that we ultimately want the second expression to be <em>a<sub>k</sub></em> &#40;1 - <em>a<sub>k</sub></em> &#41;, let us further rewrite the above expression:</p>
+            
+            <div class="math"> &#40; 1 + <em>e<sup>-net<sub>k</sub></sup></em>&#41;<sup>-1</sup>&#40; <em>e<sup>-net<sub>k</sub></sup></em> &frasl; &#40; 1 + <em>e<sup>-net<sub>k</sub></sup></em> &#41; &#41; </div>
+            
+            <p>A further rewrite yields the following:</p>
+            
+            <div class="math"> &#40; 1 + <em>e<sup>-net<sub>k</sub></sup></em>&#41;<sup>-1</sup> &#40; &#40; 1 + <em>e<sup>-net<sub>k</sub></sup></em>&#41; - 1 &#41; &frasl; &#40 1 + <em>e<sup>-net<sub>k</sub></sup></em>  &#41; &#41;</div>
+            
+            <p>We are almost there. Let us rewrite the above even futher.</p>
+            
+            <div class="math"> &#40; 1 + <em>e<sup>-net<sub>k</sub></sup></em>&#41;<sup>-1</sup> &#40; 1 - 1 &frasl; &#40; 1 + <em>e<sup>-net<sub>k</sub></sup></em>&#41;  &#41;</div>
+            
+            <p>One final rewrite of the second expression yields:</p>
+            
+            <div class="math"> &#40; 1 + <em>e<sup>-net<sub>k</sub></sup></em>&#41;<sup>-1</sup> &#40; 1 - &#40; 1 + <em>e<sup>-net<sub>k</sub></sup></em>&#41; <sup>-1</sup> &#41; or <em>a<sub>k</sub></em> &#40;1 - <em>a<sub>k</sub></em> &#41;  </div>
+            
+            <p>Having differentiated the first two expressions, let us partially differentiate the final expression with respect to w<sub>kj</sub>.</p>
+            
+            <div class="math"><em>net<sub>k</sub></em> = &#40; <em>w<sub>kj</sub></em><em>a<sub>j</sub></em> &#41;</div>
+            
+            <p>This is perhaps the easiest of the three expressions to differentiate and yields the following, where <em>a<sub>j</sub></em> is treated simply a constant:</p>
+            
+            <div class="math"> <em>a<sub>j</sub></em></div>
+            
+            <p>Given that we ultimately wanted to solve for &Delta;<em>w</em><sub><em>kj</em></sub> = &#40; &part;<em>E</em> &frasl; &part;<em>a</em><sub><em>k</em></sub> &#41; &#40; &part;<em>a</em><sub>k</sub> &frasl; &part;<em>net<sub><em>k</em></sub></em> &#41; &#40; &part;<em>net<sub>k</sub></em> &frasl; &part;w<sub><em>kj</em></sub> &#41;, let us now take the product of all three of the derivatives we have just found.</p>
+            
+            <div class="math"> -&#40;<em>t</em><sub>k</sub> - <em>a</em><sub>k</sub>&#41; <em>a<sub>k</sub></em> &#40;1 - <em>a<sub>k</sub></em>&#41;<em>a<sub>j</sub></em></div> 
+            
+            <p>This expression is typically simplified as shown below, in which the &delta; term represents the product of the error with the derivative of the activation function.</p>
+            
+            <div class="math"> &Delta;w = &delta;<em>a<sub>j</sub></em> </div>
+             
+            <p>These derivations are intended to demonstrate that for backpropagation networks, learning is the cumulative result of appropriate weight adjustments based on the contribution of each simple-processing unit in the network on total error. More concretely, we can understand how the error changes as the weights change by considering how the error changes as the output of each input changes, how the activations of one output unit changes as the net outpu changes, and finally how the net output changes as the weights change. Error can be conceptualized as the discrepancy between the actual and desired output of the system, and it is the negative derivative of this difference that dictates how closely we approximate the solution of our system. In other words, the network is performing gradient descent, as described above, to minimize the sum-squared error (where, here, the error function is assumed to be bowl shaped with just one global optimum) between the network's output values and the given target values.</p>
+            
+             <P>Despite the fact that our focus was on the backpropagation algorithm in particular, it is important to mention that there are perhaps dozens of other algorithms that modelers use in their mathematical models to solve various problems. Our choice to focus on backpropagation specifically was again motivated by the fact that it was one of the first successful algorithms that lead to impressive solutions to problems like <a href="http://home.agh.edu.pl/~vlsi/AI/xor_t/en/main.htm" class="model" target="_blank">XOR</a> and <a href="http://dl.acm.org/citation.cfm?id=339773" class="model" target="_blank">parity</a> and because, despite its limitations, it continues apace being one of the most widely used learning algorithms.</p>
+             
+             <div class="footnote"><strong>&#8727; </strong>The decision to use traditional gradient descent or stochastic gradient descent mainly depends on the size of your training set. Whereas the decision to use either procedure on small data sets is a trivial one, one should invariably use stochastic gradient descent on large data sets. In other words, for sufficiently large training sets, using the traditional gradient descent algorithm can be highly computationally expensive, given that the algorithm requires that all <em>m</em> training examples be shown before any one update is made. One may well imagine a situation in which employing traditional gradient descent is inefficient when, for example, the training set is composed of, say, 10<sup>6</sup> training examples. In contrast, progress can, and indeed will, be made much earlier when using stochastic gradient descent on large data sets, given that the procedure requires that updates be made upon each randomly chosen  and presented training example.</p>  
+          </section>
+        
+    </main>
+    
+    <footer class="site-footer">
+        <div class="inner">
+             <section class="copyright">All content copyright <span class="footer-name">Deon T. Benton</span> &copy; 2014 &bull; All rights reserved.</section>
+        </div>
+    </footer>
+    
+    <script type="text/javascript">
+
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-33778246-1']);
+		_gaq.push(['_trackPageview']);
+	  
+		(function() {
+		  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+
+	</script>
+    
+    
+    
+
+</body>
+</html>

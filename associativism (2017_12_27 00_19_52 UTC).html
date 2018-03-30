@@ -1,0 +1,85 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="shortcut icon" href="site/images/flavicon12.ico" >
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width" />
+<title>Associativism&mdash;Benton</title>
+<link href='http://fonts.googleapis.com/css?family=Noto+Serif' rel='stylesheet' type='text/css' />
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+<link href="site/css/response-css.css" rel="stylesheet" type="text/css" />
+<!--[if lt IE 9]>
+<script src="dist/html5shiv.js"></script>
+<![endif]-->
+</head>
+
+<body>
+	<header class="blog-header clear">
+    
+    	<h1><a href="index.html">Deon T. Benton</a></h1>
+        <h6>Occam's razor: a minimalist's solution</h6>
+        
+        <nav class="main-nav">
+          <div>Psychologist</div>
+          <div>Student</div>
+          <div>Human</div>
+		</nav>
+        
+    </header>
+    
+    <main class="container">
+          
+          <section class="entry-article">
+          	<h1 class="entry-title">Modeling rat reasoning</h1>
+            <span class="post-meta"><time datetime="2014-12-2">2 December 2014</time></span>
+
+			<p>An interesting finding in the rat literature by Denniston, Savastano, and Miller (2001) is that when rats are presented with an AX+ stimulus compound, where A is conditioned stimulus 1 (henceforth, CS) , X is CS<sub>2</sub>, and + refers to the presence of the food, followed by an XY+ compound, where Y is CS<sub>3</sub> and X is, again, CS<sub>2</sub>, that together predict an unconditioned stimulus (henceforth, US), rats will subsequently respond less to Y when A is shown to no longer predict the US. So, for example, if rats learned during training phase 1 that a light (CS<sub>1</sub>) and tone (CS<sub>2</sub>) both predicted food (US), and then during a second training phase that a tone (CS<sub>2</sub>) and puff of air (CS<sub>3</sub>) also predicted food (US), the rats will subsequently treat X as the true predictor of food; that is, their expectation that they'll receive food once a tone is played is much higher than their expectation that they'll receive food after either a puff of air is blown or a light is shown.  </p>
+			
+			<p>The explanation given for this finding by Wasserman and Castro's (2005) was that because A and Y had never before been paired together, the rats must have been using "high-order reasoning processes," rather than learned associations, to learn the indirect association between A and Y.  While this proposal provides one explanation of the rats' behavior, it's nevertheless possible that the rats learned simply to associate X more strongly with the US than A or Y, due simply to the fact that X was more frequently positively associated with the US than was Y or A. In addition, because the rats never learned anything about Y by itself (they were only shown A- after being shown AX+ and XY+, where - means that A doesn't predict the US), no association, neither positive nor negative, was established between Y and the US (compare my account with Denniston et al.'s, 2001 extended-comparator hypotheses). Importantly, this account predicts that the strongest (positive) association should be between X and the US, followed next by Y and the US, and then finally by A and the US.</p>
+			
+			<p>To explore this alternative account&mdash;that rats simply learned to associate X (tone) more strongly with the US (food) than either Y (puff of air) or A (light)&mdash;I built a two-layered feedforward network that was trained using the <a href="http://deonbenton.com/backprop.html" class="model" target="_blank">backpropagation</a> algorithm. Figure 1 below shows the architecture of the network. The input layer consisted of a three-unit binary vector, in which CSs A, X, and Y were represented locally; that is, each CS corresponded to a single unit in the three-unit input vector. The output layer consisted of a single binary, sigmoidal (i.e., used the sigmoid-activation function to compute its output as a function of its net input) unit, where 1 represented the presence of the US and 0, the absence of the US. There was no bias unit. Note this is only one of potentially several ways to simulate this study. In fact, my intention here is to explore the simplest instantiation of the scenario, the idea being that if such an instantiation provides evidence for my hypothesis, a presumably richer instantiation (with, say, hidden units) would fare even better.</p>
+			
+			<figure><img src="site/images/comparative-model-image.jpg" alt="image of an three-layer net" /></figure>
+			
+			<p>To simulate the training regime given rats, the network was given two training trials followed by a test trial during which it was simply shown the pretraining CSs. Specifically, the first training phase (called pre-training) to which the network was exposed established the network's implicit "background knowledge" about the causal efficacy of A, X, and Y. (For ease of understanding, I'll hereafter refer to A as the light stimulus, X as the tone stimulus, and Y as the puff of air stimulus.) In other words, the network had to learn that, prior to training, the light, tone, and puff of air held no predictive relationship with food. Following this phase, the network, as with the rats in the original study, was presented with the light and tone (which predicted food), the tone and the puff of air (which predicted food), and the light by itself (which didn't predict food) training trials. The trials were presented in interleaved fashion so to avoid <a href="http://en.wikipedia.org/wiki/Catastrophic_interferencecatastrophic" class="model" target="_blank">  catastrophic forgetting</a>&mdash;although this was much less of a concern here due to the orthogonality of the inputs. The network was then simply "asked" about whether the tone, the light, and the puff of air, individually, predicted the presence of food (i.e., the network was re-shown the pre-training patterns). The pre-training phase consisted of training the network for 120 epochs, and the training phase consisted of training the network for 100 epochs, during which the weights were adjusted to reduce error in accordance with the backpropagation algorithm. Finally, I used a learning rate of 0.01 and momentum of 0.9, and the network was initialized with small random weights. If the model learns to associate the tone more strongly with food than the light or puff of air, then I'd expect the strength of the association between the tone and food to be the strongest.</p>
+			
+			<p>The simulation results are shown below. The results are defined in terms of activation values and weight values for A, X, and Y. The activation values correspond to how strongly a particular CS was activated at test, and the weight values correspond to the strength of the association between the CS and the US. Weights can grow infinitely large as a function of amount of training in the weight value case but are bounded between 0 and 1 in the activation case. As can be seen, at test X was the most active CS, followed by Y, and then by A. In terms of the strength of the association between a given CS and US, A had a strong negative weight (indicating that the output should be 0 whenever this unit is active), X a strong positive weight (indicating that the output should be 1 whenever this unit is active), and Y an intermediate weight (indicating the network's uncertainty about whether or not the output should be on or off given an on input). To ensure that these values were not simply the result of the particular set of small random weights with which the network started, I ran the simulation 10 additional times, with the network starting off at the beginning of each simulation run with a completely different set of small random weights. In all cases, the results were consistent with the results reported here.</p> 
+			
+			<figure><img src="site/images/simul-results.jpg" alt="image of an three-layer net" /></figure>
+			
+			<p>These results reveal that, in line with my prediction, the network learned to associate X (tone) most strongly with the US (food). Furthermore, and again in line with my prediction, the network learned to associate Y (puff of air) more strongly with the US than A (light). The reason for this is because, during the course of training, the network learned to produce an output of 1 (i.e., the predict the US) by strengthening the association between X and the output. In addition, because the network was explicitly told that A was not predictive of the output (it was shown during training that the light didn't predict food), it learned to develop a strong negative association with the US. Finally, because the network was never explicitly told anything about Y, it made very little adjustment to the strength of the association between Y and the US from the start of training to the end of testing. Perhaps more interestingly, this result suggests that, contrary to Wasserman and Castro's (2005) claim, associative systems <em>can</em> in fact learn the associative relation between A and Y despite the fact that these two CSs were never presented together. Thus, rather than responding to the US on the basis of higher-order, human-like, propositional reasoning, the rats may have simply responded to the CSs based on learned associations. This provides a computational account that, in principle, can explain the rats' performance in the original study.</p>
+			
+			<p>While this prediction was not explicitly tested in the original study, the model's performance here predicts that if after learning AX+ rats are shown A+, they should respond most strongly to A, followed by X, and then by Y. Indeed, when I ran this simulation, the network produced the highest activation for A (as well as the strongest association with the US) than X or Y. Importantly, though, the network produced sufficiently high activation for X (around 0.7) as well, which suggests that rats should be responsive to X, albeit to a lesser extent than A. The reason for this is because, during training, X was paired with A, whose activation and weight values were being increased to enable it to predict the US (or 1). Thus, X's activation and association values indirectly increased as a function of its association with A during training. Notice that this contrasts with the simulations presented above, where the network produced low activations for both A and Y. Future research will need to test this prediction. Together, these results suggest that more associative forms of processing may've underlied rats' performance in the Denniston et al. (2001) study. While it may be tempting to claim that rats can reason like humans, it's certainly not necessary, and indeed may not even be sufficient.</p>
+			
+			
+          </section>
+        
+    </main>
+    
+    <footer class="site-footer">
+        <div class="inner">
+             <section class="copyright">All content copyright <span class="footer-name">Deon T. Benton</span> &copy; 2014 &bull; All rights reserved.</section>
+        </div>
+    </footer>
+    
+    <script type="text/javascript">
+
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-33778246-1']);
+		_gaq.push(['_trackPageview']);
+	  
+		(function() {
+		  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+
+	</script>
+    
+    
+    
+
+</body>
+</html>

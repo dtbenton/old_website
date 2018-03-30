@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="shortcut icon" href="site/images/flavicon12.ico" >
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width" />
+<title>SigmoidAct&mdash;Benton</title>
+<link href='http://fonts.googleapis.com/css?family=Noto+Serif' rel='stylesheet' type='text/css' />
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+<link href="site/css/response-css.css" rel="stylesheet" type="text/css" />
+<!--[if lt IE 9]>
+<script src="dist/html5shiv.js"></script>
+<![endif]-->
+</head>
+
+<body>
+	<header class="blog-header clear">
+    
+    	<h1><a href="index.html">Deon T. Benton</a></h1>
+        <h6>Occam's razor: a minimalist's solution</h6>
+        
+        <nav class="main-nav">
+          <div>Psychologist</div>
+          <div>Student</div>
+          <div>Human</div>
+		</nav>
+        
+    </header>
+    
+    <main class="container">
+          
+          <section class="entry-article">
+          	<h1 class="entry-title">An elementary introduction to computational modelling: Sigmoid Activation Function</h1>
+            <span class="post-meta"><time datetime="2014-07-18">18 July 2014</time></span>
+          	<p>Because my focus a couple of posts ago was on the backpropagation procedure more generally, it might be useful in this post to discuss why we use the sigmoidal activation function (henceforth "logistic function") on our output units in the first place. In particular, my aim is to show why using a logistic function is more desirable than using other functions.</p>  
+            
+            <p>Before we discuss the reason we use logistic units, let us first recall the logistic function itself</p>
+            
+            <div class="math"><em>a</em><sub>k</sub> = 1 &frasl; &#40; 1 + <em>e</em><sup>-net<sub>k</sub></sup>&#41; = &#40; 1 + <em>e</em><sup>-net<sub>k</sub></sup> &#41; <sup>-1</sup></div>
+            <p>where <em>a</em><sub>k</sub> represents the output unit <em>k</em> and <em>net</em><sub>k</sub> is the total net input into the output unit <em>k</em>.</p>
+            
+            <p>The first reason, then, we use the logistic function is that, unlike the <a href="http://en.wikipedia.org/wiki/Perceptron" class="model" target="_blank">linear threshold (or step) function</a> on which the perceptron is based, the logistic function is continous and hence differentiable. Indeed, to see that this is the case, I encourage you to graph the function using Wolfram Alpha or simply take a look below at the graph.</p>
+            
+            <figure><img src="site/images/sigmoid-image.jpg" alt="image of the sigmoid function" /></figure>
+            
+            <p>This feature of the logistic function has important implications for optimization algorithms like gradient descent, where the cost function we aim to minimize relies on taking the partial derivative of <em>E</em> with respect to <em>W</em> (i.e., &part;<em>E</em> &frasl; &part;<em>W</em>). You may recall that because error is not a direct function of the weights, but rather a function of multiple subterms, we need to use the chain rule to compute the partial derivative of <em>E</em> with respect to <em>W<sub>ij</sub></em>. Given that &part;<em>a</em><sub>k</sub> &frasl; &part;<em>net</em><sub>k</sub> is just one of the expressions in the chain of expressions which we aim to find the partial derivative of, we need a continous, and hence differentiable, nonlinear activation function. This, along with the fact that the derivative of the activation function is expressed in terms of the activation itself, explains the motivation for using the logistic function.</p>
+            
+            <p>The second reason we use the logistic function is because it has both linear and nonlinear properties. With regard to its nonlinear properties, as the net input grows in both the positive and negative direction, the activations of the network's output units approaches 1 and 0, respectively. This can be seen by examining the above graph. With regard to its linear properties, as the net input approaches 0 (conceptualized as the lim<sub><em>net</em><sub>k</sub> &rarr; 0</sub><em>a</em><sub>k</sub>), the activation of the output units approaches 0.5. Note that here, in the absence of input, a unit's output is right in the middle of the ordinate.  You can substitute both large and small values for <em>net</em><sub>k</sub> to get a better sense of the extremal values (i.e., 1 and 0) that the activation of a unit approaches.</p>
+            
+            <p>The third reason one may want to use the logistic function is that it bounds the possible activations of the output units. This is perhaps seen clearest when one compares the logistic function to the Hebbian learning procedure. Whereas in the latter case in which the weights, and thus the activations, of the input and output units grow infinitely large the longer the training phase continues, the former function puts a nice bound on how large and small the activations of the units can be. Thus, regardless the length of training, the activation of the output units can never exceed 1 or 0, again by virtue of the logistic expression itself. It is for this reason that the logistic function is sometimes referred to as the "squashing function."</p>
+            
+            <p>For the more mathematically inclined, you may be wondering why, when there are many other functions that are continuous and thus differentiable, we have chosen to use the logistic function. To understand why, consider the following function </p>
+            
+            <div class="math">tanh<em>x</em> = (1 - e<sup>-2x</sup>) &frasl; (1 + e<sup>-2x</sup>) = (1 - e<sup>-2x</sup>)(1 + e<sup>-2x</sup>)<sup>-1</sup> </div>
+            
+            <p>where tanh<em>x</em> is defined as the hyperbolic tangent function. It should be clear here that although tanh <em>x</em> has many of the same desirable properties as the logistic function&mdash; this includes being continuous,  approaching 1 and 0, and being bounded&mdash;taking the derivative of this expression is significantly more involved. Thus, the last reason we use the logistic function as opposed to, say, tanh<em>x</em>, is because computing the derivative of the logistic function is much quicker, and indeed much easier, than computing the derivative of tanh<em>x</em>. Of course, to truly see that this is the case, I would encourage you to take the derivative of the logistic function and then the derivative of tanh<em>x</em>.</p>
+            
+            <p>What should be clear at this point is that, unlike other functions like the step function or the tanh<em>x</em> function, the sigmoid function has many desirable features when one considers the computations the network makes. I have shown, at least intuitively, that the sigmoid function is desirable because 1) it is continuous, 2) it places a bound on the possible activations of the output units, and 3) it is easier to take the derivative of than other continuous functions with similar properties. For the reader desiring more information, I encourage you to read <a href="http://www.cnbc.cmu.edu/~plaut/IntroPDP/papers/Hinton89AI.conn-learn-proc.pdf" class="model" target="_blank">this</a> article.</p>
+            
+            
+          </section>
+          
+          <section class="related">
+          
+          	<h2>Related Posts</h2>
+            <h3 id="related-on-hover"><a href="backprop.html" id="related-anchor">An elementary introduction to computational modelling: Backpropagation<span id="related-span">18 May 2014</span></a></h3>
+           <h3 id="related-on-hover"><a href="linalgebra.html" id="related-anchor">An elementary introduction to computational modelling: Linear Algebra<span id="related-span">26 May 2014</span></a></h3>
+           
+          </section>
+
+        
+    </main>
+    
+    <footer class="site-footer">
+        <div class="inner">
+             <section class="copyright">All content copyright <span class="footer-name">Deon T. Benton</span> &copy; 2014 &bull; All rights reserved.</section>
+        </div>
+    </footer>
+    
+    <script type="text/javascript">
+
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-33778246-1']);
+		_gaq.push(['_trackPageview']);
+	  
+		(function() {
+		  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+
+	</script>
+    
+    
+    
+
+</body>
+</html>

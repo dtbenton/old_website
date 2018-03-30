@@ -1,0 +1,77 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="shortcut icon" href="site/images/flavicon12.ico" >
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width" />
+<title>CategoricalLMVariables&mdash;Benton</title>
+<link rel="stylesheet" href="site/font-awesome-4.7.0/css/font-awesome.min.css">
+<link href='http://fonts.googleapis.com/css?family=Noto+Serif' rel='stylesheet' type='text/css' />
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+<link href="site/css/response-css.css" rel="stylesheet" type="text/css" />
+<!--[if lt IE 9]>
+<script src="dist/html5shiv.js"></script>
+<![endif]-->
+</head>
+
+<body>
+	<header class="blog-header clear">
+    
+    	<h1><a href="index.html">Deon T. Benton</a></h1>
+        <h6>Occam's razor: a minimalist's solution</h6>
+        
+        <nav class="main-nav">
+          <div>Psychologist</div>
+          <div>Student</div>
+          <div>Human</div>
+		</nav>
+        
+    </header>
+    
+    <main class="container">
+          
+          <section class="entry-article">
+          	<h1 class="entry-title">Understanding and Implementing Principal Components Analysis (in R)</h1>
+            <span class="post-meta"><time datetime="2014-1-7">20 January 2017</time></span>
+
+			<p>Prompted by a recent discussion with a fellow-graduate student, I've decided I'd write a quick post about the principal components analysis (henceforth, PCA) and how to implement it in R through a working example.</p>
+			
+			<p>Without going into much detail (I'm assuming that if you're reading this post, you've at least heard of PCA), PCA is a dimensionality reduction technique that, as its name implies, seeks simplify complicated linear models by identifying the <em>k</em> components <em>k</em> or predictors <em>p</em>, among the full set of predictors <em>p</em>, that explain 99% of the variance in y. If <em>k</em> &lt; <em>p</em> (and explains 99% of the variance in y), then the simpler model should be prefered over the more complicated model.</p>
+
+			<p>In contrast, if all predictors <em>p</em> are required to explain 99% of the variance&mdash;and thus if a subset of the predictors <em>p</em> fail to explain 99% of the variance in y&mdash;then the full model should be preferred over a simple model. Note that more complicated models necesarily will explain more of the variance in y than less complicated models simply by virtue of having more predictors, a phenomenon that statisticians and machine-learning researchers call <a href="https://en.wikipedia.org/wiki/Overfitting" class="model">"overfitting"</a>.</p>
+			
+			<p>Given that we'll need to use the <span class="snippet">cov()</span> function in R to compute the covariance matrix from the data, let's first call up the <span class="snippet">stats</span> library. Note that we will use the covariance matrix to obtain the eigenvalues and eigenvectors of that matrix, which will be useful in just a new for deconstructing and reconstructing the original data.</p>
+			
+			<div class="math">library(stats)</div>
+			
+          </section>
+        
+    </main>
+    
+    <footer class="site-footer">
+        <div class="inner">
+             <section class="copyright">All content copyright <span class="footer-name">Deon T. Benton</span> &copy; 2017 &bull; All rights reserved.</section>
+        </div>
+    </footer>
+    
+    <script type="text/javascript">
+
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-33778246-1']);
+		_gaq.push(['_trackPageview']);
+	  
+		(function() {
+		  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+
+	</script>
+    
+    
+    
+
+</body>
+</html>
